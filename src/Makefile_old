@@ -1,0 +1,48 @@
+CC = gcc
+
+#-----------------------------------------------------------------------
+# List the default targets.
+#-----------------------------------------------------------------------
+
+all: prueba\
+
+
+#-----------------------------------------------------------------------
+# Source file dependencies.
+#-----------------------------------------------------------------------
+nodoLista.o: nodoLista.c\
+ nodoLista.h
+
+lista.o: lista.c\
+ lista.h\
+ nodoLista.h
+
+punto.o: punto.c\
+ punto.h
+
+arista.o: arista.c\
+ arista.h\
+ punto.h
+
+poligono.o: poligono.c\
+ poligono.h\
+ arista.h
+
+mallaVoronoi.o: mallaVoronoi.c\
+ mallaVoronoi.h\
+ lista.h\
+ arista.h
+
+prueba.o: prueba.c\
+ punto.h
+
+
+#-----------------------------------------------------------------------
+# Program generation.
+#-----------------------------------------------------------------------
+
+PRUEBA_OBJ = prueba.o poligono.o arista.o punto.o lista.o nodoLista.o mallaVoronoi.o
+
+prueba: $(PRUEBA_OBJ) 
+	$(CC) -o $@ $(PRUEBA_OBJ)  -lm 
+

@@ -1,0 +1,178 @@
+# This file is designed to be invoked from a recursive call to make.
+#
+# The makefile that includes it is expected to define the following
+# macros:
+#
+#  BIN       - The full name of the bin directory.
+#  INC       - The full name of the include directory.
+#  LIB       - The full name of the lib directory.
+#  CC        - The C compiler to be used.
+#  CFLAGS    - Flags for the C compiler.
+#  RANLIB    - The archiver randomizer command (use : if not needed).
+#  PGDIR     - The directory that contains pgplot.h and libpgplot.
+#  FORT      - The Fortran compiler.
+#  FFLAGS    - Fortran compiler options
+#  XLIB      - linking options for X11
+#  THLIB     - linking options for threads
+#  CFLIB     - linking options for CFITSIO
+#-----------------------------------------------------------------------
+
+SHELL=/bin/csh
+CPGPLOT=-L$(PGDIR) -lcpgplot -lpgplot $(XLIB)
+PGPLOT=-L$(PGDIR) -lpgplot $(XLIB)
+
+#-----------------------------------------------------------------------
+# List the default targets.
+#-----------------------------------------------------------------------
+
+all: \
+     $(BIN)\
+     $(BIN)/prueba\
+
+#-----------------------------------------------------------------------
+# Make the bin directory if necessary.
+#-----------------------------------------------------------------------
+
+$(BIN):
+	mkdir $(BIN)
+
+#-----------------------------------------------------------------------
+# Source file dependencies.
+#-----------------------------------------------------------------------
+
+#command_interp.o: command_interp.c $(INC)/libtecla.h \
+# $(INC)/history.h $(INC)/command_interp.h
+
+#help.o: help.c \
+# $(INC)/help.h
+
+fourn.o: fourn.c\
+ $(INC)/fourn.h
+
+#frprmn.o: frprmn.c\
+# $(INC)/frprmn.h
+
+#brent.o: brent.c\
+# $(INC)/brent.h
+
+#linmin.o: linmin.c\
+# $(INC)/linmin.h
+
+#f1dim.o: f1dim.c\
+# $(INC)/f1dim.h
+
+#mnbrak.o: mnbrak.c\
+# $(INC)/mnbrak.h
+
+nodoLista.o: nodoLista.c\
+ $(INC)/nodoLista.h
+
+lista.o: lista.c\
+ $(INC)/lista.h\
+ $(INC)/nodoLista.h
+
+punto.o: punto.c\
+ $(INC)/punto.h
+
+arista.o: arista.c\
+ $(INC)/arista.h\
+ $(INC)/punto.h
+
+poligono.o: poligono.c\
+ $(INC)/poligono.h\
+ $(INC)/arista.h
+
+mallaVoronoi.o: mallaVoronoi.c\
+ $(INC)/mallaVoronoi.h\
+ $(INC)/lista.h\
+ $(INC)/arista.h
+
+image_routines.o: image_routines.c\
+ $(INC)/fitsio.h\
+ $(INC)/longnam.h\
+ $(INC)/image_routines.h\
+ $(INC)/mathconst.h\
+ $(INC)/newstring.h\
+ $(INC)/slalib.h
+
+prueba.o: prueba.c \
+ $(INC)/mallaVoronoi.h\
+ $(INC)/funcL.h
+# $(INC)/command_interp.h \
+# $(INC)/fitsio.h $(INC)/longnam.h \
+# $(INC)/fourn.h \
+# $(INC)/frprmn.h \
+# $(INC)/brent.h \
+# $(INC)/linmin.h \
+# $(INC)/f1dim.h \
+# $(INC)/mnbrak.h \
+# $(INC)/help.h \
+# $(INC)/image_routines.h \
+# $(INC)/mathconst.h \
+# $(INC)/newstring.h \
+# $(INC)/nrutil.h \
+# $(INC)/parse_sexagesimal.h \
+# $(INC)/primary_beam.h \
+# $(INC)/ra_dec_string.h\
+# $(INC)/random.h \
+# $(INC)/uvsubs.h
+
+#nrutil.o: nrutil.c\
+# $(INC)/nrutil.h
+
+newstring.o: newstring.c\
+ $(INC)/newstring.h
+
+parse_sexagesimal.o: parse_sexagesimal.c\
+ $(INC)/parse_sexagesimal.h
+
+primary_beam.o: primary_beam.c \
+ $(INC)/cbi_beam.h \
+ $(INC)/mathconst.h \
+ $(INC)/primary_beam.h
+
+ra_dec_string.o: ra_dec_string.c\
+ $(INC)/ra_dec_string.h\
+ $(INC)/slalib.h
+
+random.o: random.c \
+ $(INC)/random.h
+
+uvsubs.o: uvsubs.c\
+ $(INC)/fitsio.h\
+ $(INC)/longnam.h\
+ $(INC)/slalib.h\
+ $(INC)/uvsubs.h\
+ $(INC)/mathconst.h
+
+mockcbiRoutines.o: mockcbiRoutines.c\
+ $(INC)/mockcbiRoutines.h\
+ $(INC)/fitsio.h\
+ $(INC)/fourn.h\
+ $(INC)/image_routines.h\
+ $(INC)/mathconst.h\
+ $(INC)/parse_sexagesimal.h\
+ $(INC)/primary_beam.h\
+ $(INC)/ra_dec_string.h\
+ $(INC)/random.h\
+ $(INC)/slalib.h\
+ $(INC)/uvsubs.h
+
+funcL.o: funcL.c\
+ $(INC)/funcL.h\
+ $(INC)/mallaVoronoi.h\
+ $(INC)/mockcbiRoutines.h\
+ $(INC)/image_routines.h\
+ $(INC)/uvsubs.h\
+ $(INC)/newstring.h
+
+#-----------------------------------------------------------------------
+# Program generation.
+#-----------------------------------------------------------------------
+
+#PRUEBA_OBJ = prueba.o parse_sexagesimal.o uvsubs.o random.o primary_beam.o cbi_beam.o image_routines.o ra_dec_string.o fourn.o
+PRUEBA_OBJ = prueba.o mallaVoronoi.o arista.o punto.o nodoLista.o lista.o poligono.o funcL.o parse_sexagesimal.o uvsubs.o random.o primary_beam.o cbi_beam.o image_routines.o ra_dec_string.o fourn.o newstring.o mockcbiRoutines.o
+
+$(BIN)/prueba: $(PRUEBA_OBJ) 
+	$(CC) -o $@ $(PRUEBA_OBJ)  -lm -L$(LIB) -lsla $(CFLIB) -ltecla -lcurses -lgsl -lgslcblas
+
